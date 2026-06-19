@@ -1,6 +1,6 @@
 {
   "name": "flow-auto-video",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "description": "Professional MV3 Chrome extension for AI image & video generation via a local G-Labs-compatible webhook backend.",
   "type": "module",
   "private": true,

@@ -1,28 +1,40 @@
-// Flow Auto Video — MV3 background service worker
+// Flow Auto Video — MV3 background service worker (v0.1.0)
 //
-// IMPORTANT (MV3 reality): this worker is EPHEMERAL — Chrome kills it after
-// ~30s idle. Do NOT use setInterval and do NOT keep state in memory. Use
-// chrome.alarms for recurring work and persist everything to chrome.storage.
-//
-// This is the Push 0 scaffold; real logic lands in Phase 1 (health heartbeat)
-// and Phase 2 (task polling + completion notifications).
+// MV3 reality: this worker is EPHEMERAL. We use chrome.alarms (never
+// setInterval) and persist all state to chrome.storage.
 
 import { ALARMS } from "../lib/constants.js"
+import { checkHealth, applyBadge } from "../lib/health.js"
 
-chrome.runtime.onInstalled.addListener(() => {
-  console.log("[Flow Auto Video] installed — scaffold v0.0.1")
-  // Phase 1: chrome.alarms.create(ALARMS.healthCheck, { periodInMinutes: 1 })
+function ensureAlarms() {
+  chrome.alarms.create(ALARMS.healthCheck, { periodInMinutes: 1 })
+}
+
+chrome.runtime.onInstalled.addListener(async () => {
+  console.log("[Flow Auto Video] installed — v0.1.0")
+  applyBadge("unknown")
+  ensureAlarms()
+  try {
+    await chrome.sidePanel.setPanelBehavior({ openPanelOnActionClick: false })
+  } catch (_) {}
+  checkHealth()
+})
+
+chrome.runtime.onStartup?.addListener(() => {
+  ensureAlarms()
+  checkHealth()
 })
 
 chrome.alarms.onAlarm.addListener((alarm) => {
-  switch (alarm.name) {
-    case ALARMS.healthCheck:
-      // Phase 1: ping ENDPOINTS.health, cache status + update icon badge
-      break
-    case ALARMS.pollTasks:
-      // Phase 2: poll in-flight tasks, download results, fire notifications
-      break
-    default:
-      break
+  if (alarm.name === ALARMS.healthCheck) checkHealth()
+  // ALARMS.pollTasks handled in Phase 2
+})
+
+// On-demand requests from popup / side panel
+chrome.runtime.onMessage.addListener((msg, _sender, sendResponse) => {
+  if (msg?.type === "CHECK_HEALTH") {
+    checkHealth().then((r) => sendResponse(r))
+    return true // keep channel open for async response
   }
+  return false
 })

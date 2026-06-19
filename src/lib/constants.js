@@ -19,6 +19,7 @@ export const STORAGE_KEYS = {
   promptHistory: "fav.promptHistory",
   templates: "fav.templates",
   taskQueue: "fav.taskQueue",
+  healthState: "fav.healthState",
 }
 
 // chrome.alarms names — used INSTEAD of setInterval (SW is ephemeral)
