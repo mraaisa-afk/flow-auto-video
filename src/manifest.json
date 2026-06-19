@@ -1,0 +1,29 @@
+{
+  "manifest_version": 3,
+  "name": "Flow Auto Video",
+  "version": "0.0.1",
+  "description": "Generate AI images & videos through a local G-Labs-compatible webhook backend, with smart accounts, batching, and pro workflow tools.",
+  "minimum_chrome_version": "114",
+  "key": "REPLACE_WITH_YOUR_BASE64_PUBLIC_KEY_SEE_docs/EXTENSION_KEY.md",
+  "action": {
+    "default_popup": "src/popup/index.html",
+    "default_title": "Flow Auto Video"
+  },
+  "background": {
+    "service_worker": "src/background/service-worker.js",
+    "type": "module"
+  },
+  "side_panel": {
+    "default_path": "src/sidepanel/index.html"
+  },
+  "permissions": [
+    "storage",
+    "alarms",
+    "identity",
+    "notifications",
+    "sidePanel"
+  ],
+  "host_permissions": [
+    "http://127.0.0.1:8765/*"
+  ]
+}
