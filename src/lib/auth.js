@@ -2,6 +2,8 @@
 // Requires manifest.oauth2.client_id + a stable extension ID (pinned key).
 import { $auth } from "./stores.js"
 
+const REVOKE_URL = "https://accounts.google.com/o/oauth2/revoke"
+
 function getAuthToken(interactive) {
   return new Promise((resolve, reject) => {
     chrome.identity.getAuthToken({ interactive }, (token) => {
@@ -48,7 +50,9 @@ export async function signOut() {
     if (token) {
       await removeCachedToken(token)
       try {
-        await fetch(`https://accounts.google.com/o/oauth2/revoke?token=${token}`)
+        const url = new URL(REVOKE_URL)
+        url.searchParams.set("token", token)
+        await fetch(url.toString())
       } catch (_) {}
     }
   } finally {
@@ -56,13 +60,13 @@ export async function signOut() {
   }
 }
 
-// Silent restore on open (non-interactive). Ignores “not signed in”.
+// Silent restore on open (non-interactive). Ignores not-signed-in.
 export async function restoreSession() {
   try {
     const token = await getAuthToken(false)
     const user = await fetchProfile(token)
     $auth.set({ status: "signed_in", user, error: null })
   } catch (_) {
-    // not signed in — leave state as-is
+    // not signed in - leave state as-is
   }
 }
