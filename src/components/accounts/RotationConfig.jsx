@@ -51,7 +51,7 @@ export function RotationConfig() {
         </div>
         <p class="text-[11px] leading-relaxed text-zinc-500">
           On a quota error (429) the next eligible account is chosen automatically. Execution-on-error
-          ships with auto-retry in Phase 4 \u2014 this configures how the pick is made.
+          ships with auto-retry in Phase 4 — this configures how the pick is made.
         </p>
 
         <Field label="Strategy">
