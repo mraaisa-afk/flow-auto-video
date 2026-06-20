@@ -37,11 +37,27 @@
   ::selection {
     background: rgba(99, 102, 241, 0.35);
   }
+  /* Accessibility: visible keyboard focus on all interactive elements. */
+  :where(a, button, input, textarea, select, summary, [tabindex]):focus-visible {
+    @apply outline-none ring-2 ring-brand-400/70;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.001ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.001ms !important;
+    }
+  }
 }
 
 @layer components {
   .fav-card {
     @apply rounded-2xl border border-surface-border bg-surface-2/80 p-4 shadow-card backdrop-blur-sm;
+  }
+  .fav-glass {
+    @apply rounded-2xl border border-white/10 bg-white/[0.04] shadow-card backdrop-blur-xl;
   }
   .fav-eyebrow {
     @apply text-[10px] font-semibold uppercase tracking-wider text-zinc-500;
@@ -60,5 +76,61 @@
   }
   .fav-label {
     @apply mb-1.5 block text-xs font-medium text-zinc-400;
+  }
+  /* Skeleton loader with a soft left-to-right shimmer. */
+  .fav-skeleton {
+    @apply bg-surface-3/40;
+    background-image: linear-gradient(
+      90deg,
+      transparent 0%,
+      rgba(255, 255, 255, 0.06) 50%,
+      transparent 100%
+    );
+    background-size: 200% 100%;
+    animation: fav-shimmer 1.4s ease-in-out infinite;
+  }
+  .fav-toast-in {
+    animation: fav-toast-in 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  /* High-contrast theme (toggled via <html data-contrast="high">). */
+  :root[data-contrast="high"] body {
+    background-image: none;
+    background-color: #000;
+  }
+  :root[data-contrast="high"] .fav-card,
+  :root[data-contrast="high"] .fav-glass {
+    @apply border-zinc-400 bg-surface-2;
+  }
+  :root[data-contrast="high"] .fav-input,
+  :root[data-contrast="high"] .fav-btn-icon,
+  :root[data-contrast="high"] .fav-btn-ghost {
+    @apply border-zinc-400;
+  }
+  :root[data-contrast="high"] .text-zinc-500 {
+    @apply text-zinc-300;
+  }
+  :root[data-contrast="high"] .text-zinc-600 {
+    @apply text-zinc-400;
+  }
+}
+
+@keyframes fav-shimmer {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+@keyframes fav-toast-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
   }
 }

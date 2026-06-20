@@ -3,6 +3,7 @@ import { useStore } from "@nanostores/preact"
 import { $activeTab, $health, $tasks } from "../lib/stores.js"
 import { Header } from "../components/Header.jsx"
 import { TabNav } from "../components/TabNav.jsx"
+import { ToastHost } from "../components/Toast.jsx"
 import { Dashboard } from "../views/Dashboard.jsx"
 import { Generate } from "../views/Generate.jsx"
 import { Accounts } from "../views/Accounts.jsx"
@@ -52,6 +53,7 @@ export function App() {
         </div>
       </main>
       <TabNav />
+      <ToastHost />
     </div>
   )
 }
