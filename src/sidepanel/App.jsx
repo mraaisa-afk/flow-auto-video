@@ -6,6 +6,7 @@ import { TabNav } from "../components/TabNav.jsx"
 import { Dashboard } from "../views/Dashboard.jsx"
 import { Generate } from "../views/Generate.jsx"
 import { Accounts } from "../views/Accounts.jsx"
+import { Activity } from "../views/Activity.jsx"
 import { Settings } from "../views/Settings.jsx"
 import { restoreSession } from "../lib/auth.js"
 import { STORAGE_KEYS } from "../lib/constants.js"
@@ -46,6 +47,7 @@ export function App() {
           {tab === "dashboard" && <Dashboard />}
           {tab === "generate" && <Generate />}
           {tab === "accounts" && <Accounts />}
+          {tab === "activity" && <Activity />}
           {tab === "settings" && <Settings />}
         </div>
       </main>

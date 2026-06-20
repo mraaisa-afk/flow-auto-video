@@ -1,11 +1,12 @@
 import { useStore } from "@nanostores/preact"
 import { $activeTab } from "../lib/stores.js"
-import { LayoutDashboard, Sparkles, Users, Settings as SettingsIcon } from "lucide-preact"
+import { LayoutDashboard, Sparkles, Users, Activity, Settings as SettingsIcon } from "lucide-preact"
 
 const TABS = [
   { id: "dashboard", label: "Dashboard", Icon: LayoutDashboard },
   { id: "generate", label: "Generate", Icon: Sparkles },
   { id: "accounts", label: "Accounts", Icon: Users },
+  { id: "activity", label: "Activity", Icon: Activity },
   { id: "settings", label: "Settings", Icon: SettingsIcon },
 ]
 
