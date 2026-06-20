@@ -20,6 +20,7 @@ export const STORAGE_KEYS = {
   promptHistory: "fav.promptHistory",
   templates: "fav.templates",
   taskQueue: "fav.taskQueue",
+  errorLog: "fav.errorLog",
   healthState: "fav.healthState",
 }
 
