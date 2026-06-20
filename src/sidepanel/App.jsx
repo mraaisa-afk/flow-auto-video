@@ -8,6 +8,7 @@ import { Dashboard } from "../views/Dashboard.jsx"
 import { Generate } from "../views/Generate.jsx"
 import { Accounts } from "../views/Accounts.jsx"
 import { Activity } from "../views/Activity.jsx"
+import { Developer } from "../views/Developer.jsx"
 import { Settings } from "../views/Settings.jsx"
 import { restoreSession } from "../lib/auth.js"
 import { STORAGE_KEYS } from "../lib/constants.js"
@@ -49,6 +50,7 @@ export function App() {
           {tab === "generate" && <Generate />}
           {tab === "accounts" && <Accounts />}
           {tab === "activity" && <Activity />}
+          {tab === "developer" && <Developer />}
           {tab === "settings" && <Settings />}
         </div>
       </main>

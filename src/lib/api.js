@@ -1,6 +1,7 @@
 // Flow Auto Video — G-Labs Webhook API client (submit → poll → download).
 import { getSecure } from "./storage.js"
 import { STORAGE_KEYS, WEBHOOK_HOST } from "./constants.js"
+import { recordApiCall } from "./apiLog.js"
 
 export async function getApiConfig() {
   const s = await getSecure(STORAGE_KEYS.settings, null)
@@ -12,17 +13,21 @@ export async function getApiConfig() {
 export async function submitGeneration(kind, body) {
   const { host, apiKey } = await getApiConfig()
   if (!apiKey) throw new Error("Add your webhook API key in Settings first.")
+  const path = `/api/${kind}/generate`
+  const t0 = Date.now()
   let res
   try {
-    res = await fetch(`${host}/api/${kind}/generate`, {
+    res = await fetch(`${host}${path}`, {
       method: "POST",
       headers: { "Content-Type": "application/json", "X-API-Key": apiKey },
       body: JSON.stringify(body),
     })
   } catch (_) {
+    recordApiCall({ method: "POST", path, status: null, ok: false, ms: Date.now() - t0, note: "network error" })
     throw new Error("Cannot reach the backend. Is the G-Labs Webhook server running?")
   }
   const data = await res.json().catch(() => ({}))
+  recordApiCall({ method: "POST", path, status: res.status, ok: res.ok, ms: Date.now() - t0 })
   if (!res.ok) throw new Error(data?.error || `Submit failed (${res.status})`)
   return data // { task_id, status, poll_url }
 }

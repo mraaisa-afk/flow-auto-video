@@ -21,7 +21,10 @@ export const STORAGE_KEYS = {
   templates: "fav.templates",
   taskQueue: "fav.taskQueue",
   errorLog: "fav.errorLog",
+  apiLog: "fav.apiLog",
   healthState: "fav.healthState",
+  prefs: "fav.prefs",
+  onboarded: "fav.onboarded",
 }
 
 // chrome.alarms names — used INSTEAD of setInterval (SW is ephemeral)
