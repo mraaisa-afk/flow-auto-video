@@ -52,7 +52,7 @@ export function Accounts() {
         (accounts.length === 0 ? (
           <EmptyState onAdd={() => setSection("import")} />
         ) : (
-          <div class="space-y-3">
+          <div class="grid gap-3 sm:grid-cols-2">
             {accounts.map((a) => (
               <AccountCard key={a.id} account={a} />
             ))}

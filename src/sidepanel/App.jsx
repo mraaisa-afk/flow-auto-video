@@ -31,11 +31,14 @@ export function App() {
     return () => chrome.storage.onChanged.removeListener(onChanged)
   }, [])
 
+  // Full-height, full-width workspace. Content grows with the panel (drag the
+  // panel edge to widen it) up to a comfortable reading width, and the dense
+  // views switch to multi-column once there's room.
   return (
-    <div class="mx-auto flex h-screen max-w-2xl flex-col text-zinc-100">
+    <div class="flex h-screen w-full flex-col text-zinc-100">
       <Header />
       <main class="flex-1 overflow-y-auto">
-        <div class="mx-auto max-w-md">
+        <div class="mx-auto w-full max-w-3xl">
           {tab === "dashboard" && <Dashboard />}
           {tab === "generate" && <Generate />}
           {tab === "accounts" && <Accounts />}

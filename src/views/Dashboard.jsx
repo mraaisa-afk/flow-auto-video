@@ -10,7 +10,7 @@ export function Dashboard() {
   const refresh = () => chrome.runtime.sendMessage({ type: "CHECK_HEALTH" })
 
   return (
-    <div class="animate-fade-in space-y-3 p-4">
+    <div class="animate-fade-in grid gap-3 p-4 sm:grid-cols-2">
       <section class="fav-card">
         <div class="flex items-start justify-between">
           <div class="flex items-center gap-2.5">

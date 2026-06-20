@@ -10,8 +10,7 @@
     "scopes": ["openid", "email", "profile"]
   },
   "action": {
-    "default_popup": "src/popup/index.html",
-    "default_title": "Flow Auto Video"
+    "default_title": "Flow Auto Video — open workspace"
   },
   "background": {
     "service_worker": "src/background/service-worker.js",
