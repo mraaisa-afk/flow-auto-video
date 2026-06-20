@@ -1,9 +1,10 @@
-import { useEffect } from "preact/hooks"
+import { useEffect, useState } from "preact/hooks"
 import { useStore } from "@nanostores/preact"
 import { $activeTab, $health, $tasks } from "../lib/stores.js"
 import { Header } from "../components/Header.jsx"
 import { TabNav } from "../components/TabNav.jsx"
 import { ToastHost } from "../components/Toast.jsx"
+import { Onboarding } from "../components/Onboarding.jsx"
 import { Dashboard } from "../views/Dashboard.jsx"
 import { Generate } from "../views/Generate.jsx"
 import { Accounts } from "../views/Accounts.jsx"
@@ -13,11 +14,17 @@ import { Settings } from "../views/Settings.jsx"
 import { restoreSession } from "../lib/auth.js"
 import { STORAGE_KEYS } from "../lib/constants.js"
 import { getQueue } from "../lib/taskQueue.js"
+import { getPrefs, applyTheme, isOnboarded } from "../lib/prefs.js"
 
 export function App() {
   const tab = useStore($activeTab)
+  const [onboarding, setOnboarding] = useState(false)
 
   useEffect(() => {
+    getPrefs().then(applyTheme)
+    isOnboarded().then((done) => {
+      if (!done) setOnboarding(true)
+    })
     restoreSession()
     chrome.storage.local.get(STORAGE_KEYS.healthState).then((r) => {
       const h = r[STORAGE_KEYS.healthState]
@@ -56,6 +63,7 @@ export function App() {
       </main>
       <TabNav />
       <ToastHost />
+      {onboarding && <Onboarding onDone={() => setOnboarding(false)} />}
     </div>
   )
 }

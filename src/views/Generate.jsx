@@ -10,7 +10,7 @@ import { Segmented, Field, ChipSingle } from "../components/forms.jsx"
 import { validate } from "../lib/validation.js"
 import { addHistory } from "../lib/history.js"
 import { makeTask } from "../lib/taskQueue.js"
-import { AlertTriangle, Info } from "lucide-preact"
+import { AlertTriangle, Info, Sparkles } from "lucide-preact"
 
 const BATCH_OPTIONS = [1, 2, 3, 4, 6, 8]
 
@@ -81,7 +81,7 @@ export function Generate() {
         </div>
       )}
 
-      {tasks.length > 0 && (
+      {tasks.length > 0 ? (
         <div class="space-y-2">
           <div class="flex items-center justify-between">
             <h3 class="fav-eyebrow">Results{activeCount > 0 ? ` \u00b7 ${activeCount} active` : ""}</h3>
@@ -92,6 +92,17 @@ export function Generate() {
           {tasks.map((t) => (
             <TaskCard key={t.key} task={t} />
           ))}
+        </div>
+      ) : (
+        <div class="flex flex-col items-center justify-center gap-2 rounded-2xl border border-dashed border-surface-border bg-surface-2/40 px-6 py-8 text-center">
+          <span class="grid h-12 w-12 place-items-center rounded-2xl bg-gradient-to-br from-brand-400/20 to-brand-700/20 text-brand-300">
+            <Sparkles size={22} />
+          </span>
+          <h3 class="text-sm font-semibold text-white">Nothing generated yet</h3>
+          <p class="mx-auto max-w-[18rem] text-xs text-zinc-500">
+            Write a prompt above and hit generate. Results stream in here and keep running in the
+            background \u2014 even if you switch tabs.
+          </p>
         </div>
       )}
     </div>

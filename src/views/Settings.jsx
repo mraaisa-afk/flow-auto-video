@@ -3,8 +3,9 @@ import { getSecure, setSecure } from "../lib/storage.js"
 import { STORAGE_KEYS, WEBHOOK_HOST } from "../lib/constants.js"
 import { loadAccounts } from "../lib/accounts.js"
 import { exportConfigJson, parseConfig, importConfig, summarizeConfig } from "../lib/configIo.js"
+import { getPrefs, setPrefs } from "../lib/prefs.js"
 import { toastSuccess, toastError } from "../lib/toast.js"
-import { Eye, EyeOff, Check, Lock, Download, Upload } from "lucide-preact"
+import { Eye, EyeOff, Check, Lock, Download, Upload, Contrast } from "lucide-preact"
 
 export function Settings() {
   const [apiKey, setApiKey] = useState("")
@@ -12,6 +13,7 @@ export function Settings() {
   const [reveal, setReveal] = useState(false)
   const [saved, setSaved] = useState(false)
   const [includeKey, setIncludeKey] = useState(true)
+  const [highContrast, setHighContrast] = useState(false)
   const fileRef = useRef(null)
 
   useEffect(() => {
@@ -21,12 +23,18 @@ export function Settings() {
         setHost(s.webhookHost || WEBHOOK_HOST)
       }
     })
+    getPrefs().then((p) => setHighContrast(!!p.highContrast))
   }, [])
 
   const save = async () => {
     await setSecure(STORAGE_KEYS.settings, { apiKey, webhookHost: host })
     setSaved(true)
     setTimeout(() => setSaved(false), 1500)
+  }
+
+  const toggleContrast = async (v) => {
+    setHighContrast(v)
+    await setPrefs({ highContrast: v })
   }
 
   const doExport = async () => {
@@ -118,6 +126,32 @@ export function Settings() {
             "Save settings"
           )}
         </button>
+      </section>
+
+      <section class="fav-card space-y-3">
+        <div>
+          <div class="fav-eyebrow">Appearance</div>
+          <h2 class="text-sm font-semibold text-white">Accessibility</h2>
+        </div>
+        <label class="flex items-center justify-between gap-3">
+          <span class="flex items-center gap-2.5">
+            <span class="grid h-8 w-8 place-items-center rounded-lg bg-surface-3/70 text-brand-300"><Contrast size={16} /></span>
+            <span>
+              <span class="block text-sm font-medium text-white">High contrast</span>
+              <span class="block text-[11px] text-zinc-500">Stronger borders and brighter text</span>
+            </span>
+          </span>
+          <button
+            type="button"
+            role="switch"
+            aria-checked={highContrast ? "true" : "false"}
+            aria-label="Toggle high contrast"
+            onClick={() => toggleContrast(!highContrast)}
+            class={`relative h-6 w-11 shrink-0 rounded-full transition-colors ${highContrast ? "bg-brand" : "bg-surface-3"}`}
+          >
+            <span class={`absolute top-0.5 h-5 w-5 rounded-full bg-white transition-all ${highContrast ? "left-[1.375rem]" : "left-0.5"}`} />
+          </button>
+        </label>
       </section>
 
       <section class="fav-card space-y-3">
