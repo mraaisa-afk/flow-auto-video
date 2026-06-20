@@ -17,3 +17,23 @@ export const $health = map({
 
 // Active tab in the shell
 export const $activeTab = atom("dashboard")
+
+// Generation tasks, most recent first.
+// task: { key, id, kind, prompt, status, results, error, errorCode, createdAt }
+export const $tasks = atom([])
+
+export function upsertTask(patch) {
+  const list = $tasks.get()
+  const idx = list.findIndex((t) => t.key === patch.key)
+  if (idx === -1) {
+    $tasks.set([patch, ...list].slice(0, 20))
+  } else {
+    const next = list.slice()
+    next[idx] = { ...next[idx], ...patch }
+    $tasks.set(next)
+  }
+}
+
+export function clearTasks() {
+  $tasks.set([])
+}
