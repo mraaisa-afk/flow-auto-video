@@ -51,8 +51,8 @@ export function Onboarding({ onDone }) {
             </span>
             <h2 class="text-base font-semibold text-white">Welcome to Flow Auto Video</h2>
             <p class="mx-auto max-w-[18rem] text-xs leading-relaxed text-zinc-400">
-              Generate AI images & videos through your local G-Labs webhook \u2014 with smart accounts,
-              batching, templates and background queueing. Let\u2019s get you connected.
+              Generate AI images & videos through your local G-Labs webhook — with smart accounts,
+              batching, templates and background queueing. Let’s get you connected.
             </p>
             <button onClick={() => setStep(1)} class="fav-btn-primary w-full">
               Get started <ArrowRight size={15} />
@@ -79,7 +79,7 @@ export function Onboarding({ onDone }) {
             </div>
             <div class="flex gap-2">
               <button onClick={() => setStep(2)} class="fav-btn-ghost flex-1">Skip</button>
-              <button onClick={saveBackend} class="fav-btn-primary flex-1">Save &amp; continue</button>
+              <button onClick={saveBackend} class="fav-btn-primary flex-1">Save & continue</button>
             </div>
           </div>
         )}

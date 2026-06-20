@@ -101,7 +101,7 @@ export function Generate() {
           <h3 class="text-sm font-semibold text-white">Nothing generated yet</h3>
           <p class="mx-auto max-w-[18rem] text-xs text-zinc-500">
             Write a prompt above and hit generate. Results stream in here and keep running in the
-            background \u2014 even if you switch tabs.
+            background — even if you switch tabs.
           </p>
         </div>
       )}

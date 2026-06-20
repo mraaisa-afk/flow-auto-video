@@ -157,7 +157,7 @@ export function Settings() {
       <section class="fav-card space-y-3">
         <div>
           <div class="fav-eyebrow">Backup</div>
-          <h2 class="text-sm font-semibold text-white">Export &amp; import config</h2>
+          <h2 class="text-sm font-semibold text-white">Export & import config</h2>
           <p class="mt-0.5 text-[11px] text-zinc-500">
             Move settings, accounts, rotation, templates and prompt history between machines.
           </p>
@@ -195,7 +195,7 @@ export function Settings() {
         <Lock size={14} class="mt-0.5 shrink-0 text-zinc-500" />
         <p class="text-[11px] leading-relaxed text-zinc-500">
           Stored encrypted at rest via Web Crypto (AES-GCM). This guards against casual
-          inspection \u2014 not a determined attacker with local machine access.
+          inspection — not a determined attacker with local machine access.
         </p>
       </div>
     </div>
