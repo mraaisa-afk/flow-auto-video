@@ -1,4 +1,4 @@
-import { useRef, useState } from "preact/hooks"
+import { useRef, useState, useEffect } from "preact/hooks"
 import { fileToDataUrl } from "../lib/files.js"
 import { ImagePlus, X } from "lucide-preact"
 
@@ -18,13 +18,32 @@ export function RefDropzone({ value = [], onChange, max = 10, allowNames = true 
     setBusy(true)
     try {
       const items = await Promise.all(
-        picked.map(async (f) => ({ data: await fileToDataUrl(f), name: f.name }))
+        picked.map(async (f) => ({ data: await fileToDataUrl(f), name: f.name || "pasted.png" }))
       )
       onChange([...value, ...items])
     } finally {
       setBusy(false)
     }
   }
+
+  // Clipboard paste: capture image data anywhere while this dropzone is mounted.
+  useEffect(() => {
+    const onPaste = (e) => {
+      const files = []
+      for (const item of e.clipboardData?.items || []) {
+        if (item.type && item.type.startsWith("image/")) {
+          const f = item.getAsFile()
+          if (f) files.push(f)
+        }
+      }
+      if (files.length) {
+        e.preventDefault()
+        addFiles(files)
+      }
+    }
+    window.addEventListener("paste", onPaste)
+    return () => window.removeEventListener("paste", onPaste)
+  }, [value])
 
   const onDrop = (e) => {
     e.preventDefault()
@@ -51,7 +70,7 @@ export function RefDropzone({ value = [], onChange, max = 10, allowNames = true 
       >
         <ImagePlus size={18} class="text-zinc-500" />
         <span class="text-xs text-zinc-400">
-          {busy ? "Reading\u2026" : value.length >= max ? `Max ${max} images` : "Drop or click to add references"}
+          {busy ? "Reading\u2026" : value.length >= max ? `Max ${max} images` : "Drop, paste, or click to add references"}
         </span>
         <span class="text-[10px] text-zinc-600">
           {value.length}/{max}
