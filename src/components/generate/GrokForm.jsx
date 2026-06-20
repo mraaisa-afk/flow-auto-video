@@ -4,8 +4,7 @@ import { Field, Textarea, Select, ChipSingle } from "../forms.jsx"
 import { RefDropzone } from "../RefDropzone.jsx"
 import { Bot } from "lucide-preact"
 
-export function GrokForm({ onSubmit }) {
-  const [prompt, setPrompt] = useState("")
+export function GrokForm({ onSubmit, prompt, setPrompt }) {
   const [mode, setMode] = useState("t2i")
   const [aspect, setAspect] = useState("9:16")
   const [refs, setRefs] = useState([])

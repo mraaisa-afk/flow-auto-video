@@ -4,8 +4,7 @@ import { Field, Textarea, Select, ChipMulti, ChipSingle } from "../forms.jsx"
 import { RefDropzone } from "../RefDropzone.jsx"
 import { Clapperboard } from "lucide-preact"
 
-export function VideoForm({ onSubmit }) {
-  const [prompt, setPrompt] = useState("")
+export function VideoForm({ onSubmit, prompt, setPrompt }) {
   const [model, setModel] = useState(VIDEO.models[0].value)
   const [aspect, setAspect] = useState("16:9")
   const [mode, setMode] = useState("text_to_video")

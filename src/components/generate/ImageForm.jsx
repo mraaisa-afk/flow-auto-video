@@ -4,8 +4,7 @@ import { Field, Textarea, Select, ChipMulti } from "../forms.jsx"
 import { RefDropzone } from "../RefDropzone.jsx"
 import { Sparkles } from "lucide-preact"
 
-export function ImageForm({ onSubmit }) {
-  const [prompt, setPrompt] = useState("")
+export function ImageForm({ onSubmit, prompt, setPrompt }) {
   const [model, setModel] = useState(IMAGE.models[0].value)
   const [aspect, setAspect] = useState("1:1")
   const [refs, setRefs] = useState([])

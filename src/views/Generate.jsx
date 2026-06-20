@@ -1,36 +1,44 @@
 import { useState } from "preact/hooks"
 import { useStore } from "@nanostores/preact"
-import { $tasks, upsertTask, clearTasks } from "../lib/stores.js"
-import { submitGeneration, pollUntilDone, rebaseFileUrl, getApiConfig } from "../lib/api.js"
+import { $tasks } from "../lib/stores.js"
 import { ImageForm } from "../components/generate/ImageForm.jsx"
 import { VideoForm } from "../components/generate/VideoForm.jsx"
 import { GrokForm } from "../components/generate/GrokForm.jsx"
 import { TaskCard } from "../components/generate/TaskCard.jsx"
-import { Segmented } from "../components/forms.jsx"
+import { PromptTools } from "../components/generate/PromptTools.jsx"
+import { Segmented, Field, ChipSingle } from "../components/forms.jsx"
+import { validate } from "../lib/validation.js"
+import { addHistory } from "../lib/history.js"
+import { makeTask } from "../lib/taskQueue.js"
+import { AlertTriangle, Info } from "lucide-preact"
+
+const BATCH_OPTIONS = [1, 2, 3, 4, 6, 8]
 
 export function Generate() {
   const [kind, setKind] = useState("image")
+  const [prompt, setPrompt] = useState("")
+  const [batch, setBatch] = useState(1)
+  const [preflight, setPreflight] = useState({ errors: [], warnings: [] })
   const tasks = useStore($tasks)
-  const activeCount = tasks.filter((t) => t.status === "pending" || t.status === "running").length
+  const activeCount = tasks.filter((t) => t.status === "queued" || t.status === "running").length
 
-  const runGeneration = async (genKind, body) => {
-    const key = `${Date.now()}-${Math.random().toString(36).slice(2, 7)}`
-    upsertTask({ key, kind: genKind, prompt: body.prompt, status: "pending", results: [], createdAt: Date.now() })
-    try {
-      const { host } = await getApiConfig()
-      const sub = await submitGeneration(genKind, body)
-      upsertTask({ key, id: sub.task_id, status: "running" })
-      const done = await pollUntilDone(sub.task_id, {
-        onUpdate: (s) => {
-          if (s.status === "pending" || s.status === "running") upsertTask({ key, status: s.status })
-        },
-      })
-      const results = (done.results || []).map((u) => rebaseFileUrl(u, host))
-      upsertTask({ key, status: "completed", results })
-    } catch (e) {
-      upsertTask({ key, status: "failed", error: e?.message, errorCode: e?.code })
+  const runGeneration = (genKind, body) => {
+    const v = validate(genKind, body)
+    setPreflight(v)
+    if (v.errors.length > 0) return
+    addHistory({ kind: genKind, prompt: body.prompt })
+    const total = Math.max(1, Math.min(8, batch))
+    const groupId = total > 1 ? "b_" + Date.now().toString(36) : null
+    const newTasks = []
+    for (let i = 0; i < total; i++) {
+      newTasks.push(
+        makeTask({ kind: genKind, body, batch: groupId ? { groupId, index: i + 1, total } : null })
+      )
     }
+    chrome.runtime.sendMessage({ type: "ENQUEUE_TASKS", tasks: newTasks })
   }
+
+  const clearFinished = () => chrome.runtime.sendMessage({ type: "CLEAR_FINISHED" })
 
   return (
     <div class="animate-fade-in space-y-4 p-4">
@@ -44,20 +52,41 @@ export function Generate() {
         ]}
       />
 
+      <PromptTools kind={kind} prompt={prompt} setPrompt={setPrompt} />
+
+      <Field label="Batch" hint="variations per click">
+        <ChipSingle value={batch} onChange={setBatch} options={BATCH_OPTIONS} />
+      </Field>
+
       <section class="fav-card">
-        {kind === "image" && <ImageForm onSubmit={runGeneration} />}
-        {kind === "video" && <VideoForm onSubmit={runGeneration} />}
-        {kind === "grok" && <GrokForm onSubmit={runGeneration} />}
+        {kind === "image" && <ImageForm onSubmit={runGeneration} prompt={prompt} setPrompt={setPrompt} />}
+        {kind === "video" && <VideoForm onSubmit={runGeneration} prompt={prompt} setPrompt={setPrompt} />}
+        {kind === "grok" && <GrokForm onSubmit={runGeneration} prompt={prompt} setPrompt={setPrompt} />}
       </section>
+
+      {(preflight.errors.length > 0 || preflight.warnings.length > 0) && (
+        <div class="space-y-1.5">
+          {preflight.errors.map((m, i) => (
+            <div key={`e${i}`} class="flex items-start gap-2 rounded-lg bg-rose-500/10 px-3 py-2 text-[11px] text-rose-300">
+              <AlertTriangle size={13} class="mt-0.5 shrink-0" />
+              {m}
+            </div>
+          ))}
+          {preflight.warnings.map((m, i) => (
+            <div key={`w${i}`} class="flex items-start gap-2 rounded-lg bg-amber-500/10 px-3 py-2 text-[11px] text-amber-300">
+              <Info size={13} class="mt-0.5 shrink-0" />
+              {m}
+            </div>
+          ))}
+        </div>
+      )}
 
       {tasks.length > 0 && (
         <div class="space-y-2">
           <div class="flex items-center justify-between">
-            <h3 class="fav-eyebrow">
-              Results{activeCount > 0 ? ` \u00b7 ${activeCount} running` : ""}
-            </h3>
-            <button onClick={clearTasks} class="text-[11px] text-zinc-500 hover:text-zinc-300">
-              Clear
+            <h3 class="fav-eyebrow">Results{activeCount > 0 ? ` \u00b7 ${activeCount} active` : ""}</h3>
+            <button onClick={clearFinished} class="text-[11px] text-zinc-500 hover:text-zinc-300">
+              Clear finished
             </button>
           </div>
           {tasks.map((t) => (
