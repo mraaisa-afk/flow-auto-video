@@ -12,6 +12,7 @@ export function VideoForm({ onSubmit }) {
   const [refs, setRefs] = useState([])
   const [resolution, setResolution] = useState(["720p"])
   const [length, setLength] = useState(8)
+  const [voice, setVoice] = useState("")
 
   const modeCfg = VIDEO.modes.find((m) => m.value === mode) || VIDEO.modes[0]
   const needsRefs = modeCfg.refs > 0
@@ -28,6 +29,7 @@ export function VideoForm({ onSubmit }) {
       video_length: length,
     }
     if (refs.length) body.reference_images = refs.map((r) => ({ data: r.data, name: r.name }))
+    if (mode === "components" && voice.trim()) body.voice = voice.trim().toLowerCase()
     onSubmit("video", body)
   }
 
@@ -55,6 +57,16 @@ export function VideoForm({ onSubmit }) {
       {modeCfg.refs > 0 && (
         <Field label="Reference images" hint={modeCfg.refs === 2 ? "start + end frame" : `up to ${modeCfg.refs}`}>
           <RefDropzone value={refs} onChange={setRefs} max={modeCfg.refs} />
+        </Field>
+      )}
+      {mode === "components" && (
+        <Field label="Voice" hint="optional \u00b7 components only">
+          <input
+            value={voice}
+            onInput={(e) => setVoice(e.currentTarget.value)}
+            placeholder="e.g. aoede"
+            class="fav-input w-full"
+          />
         </Field>
       )}
       <div class="grid grid-cols-2 gap-3">
