@@ -32,13 +32,15 @@ export function App() {
   }, [])
 
   return (
-    <div class="mx-auto flex h-screen max-w-2xl flex-col">
+    <div class="mx-auto flex h-screen max-w-2xl flex-col text-zinc-100">
       <Header />
       <main class="flex-1 overflow-y-auto">
-        {tab === "dashboard" && <Dashboard />}
-        {tab === "generate" && <Generate />}
-        {tab === "accounts" && <Accounts />}
-        {tab === "settings" && <Settings />}
+        <div class="mx-auto max-w-md">
+          {tab === "dashboard" && <Dashboard />}
+          {tab === "generate" && <Generate />}
+          {tab === "accounts" && <Accounts />}
+          {tab === "settings" && <Settings />}
+        </div>
       </main>
       <TabNav />
     </div>

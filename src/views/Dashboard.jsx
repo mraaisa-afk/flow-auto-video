@@ -1,18 +1,8 @@
 import { useStore } from "@nanostores/preact"
 import { $health, $auth } from "../lib/stores.js"
 import { signIn, signOut } from "../lib/auth.js"
-import { RefreshCw } from "lucide-preact"
-
-function StatusPill({ state }) {
-  const map = {
-    connected: ["Connected", "text-green-400"],
-    partial: ["Degraded", "text-yellow-400"],
-    disconnected: ["Disconnected", "text-red-400"],
-    unknown: ["Unknown", "text-zinc-400"],
-  }
-  const [label, cls] = map[state] || map.unknown
-  return <span class={`font-medium ${cls}`}>{label}</span>
-}
+import { RefreshCw, LogOut, Server, ShieldCheck } from "lucide-preact"
+import { StatusPill, Avatar } from "../components/ui.jsx"
 
 export function Dashboard() {
   const health = useStore($health)
@@ -20,50 +10,63 @@ export function Dashboard() {
   const refresh = () => chrome.runtime.sendMessage({ type: "CHECK_HEALTH" })
 
   return (
-    <div class="space-y-4 p-4">
-      <section class="rounded-lg border border-zinc-800 p-3">
-        <div class="flex items-center justify-between">
-          <h2 class="text-sm font-medium text-zinc-300">Backend connection</h2>
-          <button onClick={refresh} class="text-zinc-400 hover:text-zinc-200" title="Re-check">
+    <div class="animate-fade-in space-y-3 p-4">
+      <section class="fav-card">
+        <div class="flex items-start justify-between">
+          <div class="flex items-center gap-2.5">
+            <span class="grid h-9 w-9 place-items-center rounded-xl bg-surface-3/70 text-brand-300">
+              <Server size={17} />
+            </span>
+            <div>
+              <div class="fav-eyebrow">Backend</div>
+              <div class="text-sm font-semibold text-white">Local webhook</div>
+            </div>
+          </div>
+          <button onClick={refresh} class="fav-btn-icon" title="Re-check now" aria-label="Re-check">
             <RefreshCw size={14} />
           </button>
         </div>
-        <p class="mt-1 text-sm">Status: <StatusPill state={health.state} /></p>
-        <p class="mt-1 text-xs text-zinc-500">
-          {health.lastChecked
-            ? `Checked ${new Date(health.lastChecked).toLocaleTimeString()}`
-            : "Not checked yet"}
-        </p>
+        <div class="mt-3 flex items-center justify-between">
+          <StatusPill state={health.state} />
+          <span class="text-[11px] text-zinc-500">
+            {health.lastChecked
+              ? `Checked ${new Date(health.lastChecked).toLocaleTimeString()}`
+              : "Not checked yet"}
+          </span>
+        </div>
       </section>
 
-      <section class="rounded-lg border border-zinc-800 p-3">
-        <h2 class="text-sm font-medium text-zinc-300">Google account</h2>
+      <section class="fav-card">
+        <div class="flex items-center gap-2.5">
+          <span class="grid h-9 w-9 place-items-center rounded-xl bg-surface-3/70 text-brand-300">
+            <ShieldCheck size={17} />
+          </span>
+          <div>
+            <div class="fav-eyebrow">Identity</div>
+            <div class="text-sm font-semibold text-white">Google account</div>
+          </div>
+        </div>
+
         {auth.status === "signed_in" ? (
-          <div class="mt-2 flex items-center justify-between">
-            <div class="flex items-center gap-2">
-              {auth.user?.picture && (
-                <img src={auth.user.picture} class="h-7 w-7 rounded-full" alt="" />
-              )}
-              <div class="text-sm">
-                <div>{auth.user?.name}</div>
-                <div class="text-xs text-zinc-500">{auth.user?.email}</div>
+          <div class="mt-3 flex items-center justify-between rounded-xl bg-surface-1/70 p-2.5">
+            <div class="flex min-w-0 items-center gap-2.5">
+              <Avatar src={auth.user?.picture} name={auth.user?.name} size={34} />
+              <div class="min-w-0">
+                <div class="truncate text-sm font-medium text-white">{auth.user?.name}</div>
+                <div class="truncate text-xs text-zinc-500">{auth.user?.email}</div>
               </div>
             </div>
-            <button onClick={signOut} class="text-xs text-red-400 hover:text-red-300">
-              Sign out
+            <button onClick={signOut} class="fav-btn-ghost shrink-0 px-2.5 py-1.5 text-xs" title="Sign out">
+              <LogOut size={13} /> Sign out
             </button>
           </div>
         ) : (
-          <div class="mt-2">
-            <button
-              onClick={signIn}
-              disabled={auth.status === "signing_in"}
-              class="rounded-md bg-brand px-3 py-1.5 text-sm font-medium text-white hover:bg-brand-soft disabled:opacity-50"
-            >
+          <div class="mt-3">
+            <button onClick={signIn} disabled={auth.status === "signing_in"} class="fav-btn-primary w-full">
               {auth.status === "signing_in" ? "Signing in\u2026" : "Sign in with Google"}
             </button>
             {auth.status === "error" && (
-              <p class="mt-2 text-xs text-red-400">{auth.error}</p>
+              <p class="mt-2 rounded-lg bg-rose-500/10 px-3 py-2 text-xs text-rose-300">{auth.error}</p>
             )}
           </div>
         )}

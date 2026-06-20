@@ -1,6 +1,7 @@
 import { useEffect, useState } from "preact/hooks"
 import { getSecure, setSecure } from "../lib/storage.js"
 import { STORAGE_KEYS, WEBHOOK_HOST } from "../lib/constants.js"
+import { Eye, EyeOff, Check, Lock } from "lucide-preact"
 
 export function Settings() {
   const [apiKey, setApiKey] = useState("")
@@ -24,44 +25,62 @@ export function Settings() {
   }
 
   return (
-    <div class="space-y-3 p-4">
-      <h2 class="text-sm font-medium text-zinc-300">Settings</h2>
-      <label class="block text-xs text-zinc-400">
-        Webhook host
-        <input
-          value={host}
-          onInput={(e) => setHost(e.currentTarget.value)}
-          class="mt-1 w-full rounded-md border border-zinc-700 bg-zinc-900 px-2 py-1.5 text-sm text-zinc-100"
-        />
-      </label>
-      <label class="block text-xs text-zinc-400">
-        API key (X-API-Key)
-        <div class="mt-1 flex gap-2">
-          <input
-            type={reveal ? "text" : "password"}
-            value={apiKey}
-            onInput={(e) => setApiKey(e.currentTarget.value)}
-            placeholder="your webhook API key"
-            class="w-full rounded-md border border-zinc-700 bg-zinc-900 px-2 py-1.5 text-sm text-zinc-100"
-          />
-          <button
-            onClick={() => setReveal((r) => !r)}
-            class="rounded-md border border-zinc-700 px-2 text-xs text-zinc-400 hover:text-zinc-200"
-          >
-            {reveal ? "Hide" : "Show"}
-          </button>
+    <div class="animate-fade-in space-y-4 p-4">
+      <section class="fav-card space-y-4">
+        <div>
+          <div class="fav-eyebrow">Connection</div>
+          <h2 class="text-sm font-semibold text-white">Backend settings</h2>
         </div>
-      </label>
-      <p class="text-[11px] text-zinc-500">
-        Stored encrypted at rest (Web Crypto). Guards against casual inspection,
-        not a determined local attacker.
-      </p>
-      <button
-        onClick={save}
-        class="rounded-md bg-brand px-3 py-1.5 text-sm font-medium text-white hover:bg-brand-soft"
-      >
-        {saved ? "Saved \u2713" : "Save"}
-      </button>
+
+        <div>
+          <label class="fav-label">Webhook host</label>
+          <input
+            value={host}
+            onInput={(e) => setHost(e.currentTarget.value)}
+            class="fav-input"
+            placeholder="http://127.0.0.1:8765"
+          />
+        </div>
+
+        <div>
+          <label class="fav-label">API key (X-API-Key)</label>
+          <div class="flex gap-2">
+            <input
+              type={reveal ? "text" : "password"}
+              value={apiKey}
+              onInput={(e) => setApiKey(e.currentTarget.value)}
+              placeholder="your webhook API key"
+              class="fav-input"
+            />
+            <button
+              onClick={() => setReveal((r) => !r)}
+              class="fav-btn-icon shrink-0"
+              title={reveal ? "Hide" : "Show"}
+              aria-label={reveal ? "Hide" : "Show"}
+            >
+              {reveal ? <EyeOff size={15} /> : <Eye size={15} />}
+            </button>
+          </div>
+        </div>
+
+        <button onClick={save} class="fav-btn-primary w-full">
+          {saved ? (
+            <>
+              <Check size={15} /> Saved
+            </>
+          ) : (
+            "Save settings"
+          )}
+        </button>
+      </section>
+
+      <div class="flex items-start gap-2 rounded-xl border border-surface-border bg-surface-2/50 p-3">
+        <Lock size={14} class="mt-0.5 shrink-0 text-zinc-500" />
+        <p class="text-[11px] leading-relaxed text-zinc-500">
+          Stored encrypted at rest via Web Crypto (AES-GCM). This guards against casual
+          inspection — not a determined attacker with local machine access.
+        </p>
+      </div>
     </div>
   )
 }

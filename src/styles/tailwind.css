@@ -1,3 +1,64 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer base {
+  :root {
+    color-scheme: dark;
+  }
+  html,
+  body {
+    @apply font-sans antialiased;
+  }
+  body {
+    background-color: #0b0b12;
+    background-image:
+      radial-gradient(60% 55% at 50% 0%, rgba(99, 102, 241, 0.12), transparent 70%),
+      radial-gradient(45% 35% at 100% 0%, rgba(129, 140, 248, 0.07), transparent 70%);
+    background-attachment: fixed;
+  }
+  ::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: #2a2a36;
+    border-radius: 9999px;
+    border: 2px solid transparent;
+    background-clip: padding-box;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: #3a3a48;
+    background-clip: padding-box;
+  }
+  ::selection {
+    background: rgba(99, 102, 241, 0.35);
+  }
+}
+
+@layer components {
+  .fav-card {
+    @apply rounded-2xl border border-surface-border bg-surface-2/80 p-4 shadow-card backdrop-blur-sm;
+  }
+  .fav-eyebrow {
+    @apply text-[10px] font-semibold uppercase tracking-wider text-zinc-500;
+  }
+  .fav-btn-primary {
+    @apply inline-flex items-center justify-center gap-1.5 rounded-lg bg-brand px-3.5 py-2 text-sm font-medium text-white shadow-[0_6px_20px_-8px_rgba(99,102,241,0.85)] transition-all duration-150 hover:bg-brand-600 active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-50;
+  }
+  .fav-btn-ghost {
+    @apply inline-flex items-center justify-center gap-1.5 rounded-lg border border-surface-border bg-surface-3/60 px-3.5 py-2 text-sm font-medium text-zinc-300 transition-colors hover:bg-surface-3 hover:text-white;
+  }
+  .fav-btn-icon {
+    @apply inline-flex h-8 w-8 items-center justify-center rounded-lg border border-surface-border bg-surface-3/60 text-zinc-400 transition-colors hover:bg-surface-3 hover:text-white;
+  }
+  .fav-input {
+    @apply w-full rounded-lg border border-surface-border bg-surface-1 px-3 py-2 text-sm text-zinc-100 placeholder-zinc-600 outline-none transition-colors focus:border-brand-400 focus:ring-2 focus:ring-brand-500/25;
+  }
+  .fav-label {
+    @apply mb-1.5 block text-xs font-medium text-zinc-400;
+  }
+}

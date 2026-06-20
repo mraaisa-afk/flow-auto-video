@@ -46,22 +46,22 @@ export function App() {
   }
 
   return (
-    <div class="flex h-full min-h-[480px] flex-col">
+    <div class="flex h-full min-h-[480px] flex-col text-zinc-100">
       <Header />
-      <div class="flex items-center justify-end px-4 py-1">
-        <button
-          onClick={openSidePanel}
-          class="flex items-center gap-1 text-[11px] text-zinc-500 hover:text-zinc-300"
-        >
-          <PanelRightOpen size={13} /> Open workspace
-        </button>
-      </div>
       <main class="flex-1 overflow-y-auto">
         {tab === "dashboard" && <Dashboard />}
         {tab === "generate" && <Generate />}
         {tab === "accounts" && <Accounts />}
         {tab === "settings" && <Settings />}
       </main>
+      <div class="flex items-center justify-center border-t border-surface-border/60 px-4 py-1.5">
+        <button
+          onClick={openSidePanel}
+          class="flex items-center gap-1.5 text-[11px] font-medium text-zinc-500 transition-colors hover:text-brand-300"
+        >
+          <PanelRightOpen size={13} /> Open full workspace
+        </button>
+      </div>
       <TabNav />
     </div>
   )
