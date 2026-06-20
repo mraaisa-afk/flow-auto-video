@@ -15,6 +15,7 @@ export const ENDPOINTS = {
 // chrome.storage keys (namespaced fav.*)
 export const STORAGE_KEYS = {
   accounts: "fav.accounts",
+  rotation: "fav.rotation",
   settings: "fav.settings",
   promptHistory: "fav.promptHistory",
   templates: "fav.templates",

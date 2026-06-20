@@ -1,20 +1,65 @@
-import { Users } from "lucide-preact"
+import { useEffect, useState } from "preact/hooks"
+import { useStore } from "@nanostores/preact"
+import { Users, Plus } from "lucide-preact"
+import { $accounts, loadAccounts, refreshQuotaResets } from "../lib/accounts.js"
+import { AccountCard } from "../components/accounts/AccountCard.jsx"
+import { QuotaDashboard } from "../components/accounts/QuotaDashboard.jsx"
+import { RotationConfig } from "../components/accounts/RotationConfig.jsx"
+import { AddAccountPanel } from "../components/accounts/AddAccountPanel.jsx"
+import { Segmented } from "../components/forms.jsx"
 
-export function Accounts() {
+function EmptyState({ onAdd }) {
   return (
-    <div class="animate-fade-in flex flex-col items-center justify-center gap-3 p-8 text-center">
-      <span class="grid h-14 w-14 place-items-center rounded-2xl bg-gradient-to-br from-brand-400/20 to-brand-700/20 text-brand-300">
-        <Users size={24} />
+    <div class="flex flex-col items-center justify-center gap-3 rounded-2xl border border-dashed border-surface-border bg-surface-2/40 p-8 text-center">
+      <span class="grid h-12 w-12 place-items-center rounded-2xl bg-gradient-to-br from-brand-400/20 to-brand-700/20 text-brand-300">
+        <Users size={22} />
       </span>
       <div>
-        <h2 class="text-sm font-semibold text-white">Account Intelligence</h2>
-        <p class="mx-auto mt-1 max-w-[15rem] text-xs text-zinc-500">
-          Account cards, health scoring &amp; auto-rotation arrive in Phase 3.
+        <h2 class="text-sm font-semibold text-white">No accounts yet</h2>
+        <p class="mx-auto mt-1 max-w-[16rem] text-xs text-zinc-500">
+          Add the accounts your desktop app manages to unlock health scoring, quota tracking and
+          auto-rotation.
         </p>
       </div>
-      <span class="rounded-full border border-surface-border bg-surface-3/60 px-2.5 py-1 text-[11px] font-medium text-zinc-400">
-        Coming in Phase 3
-      </span>
+      <button onClick={onAdd} class="fav-btn-primary">
+        <Plus size={15} /> Add your first account
+      </button>
+    </div>
+  )
+}
+
+export function Accounts() {
+  const accounts = useStore($accounts)
+  const [section, setSection] = useState("accounts")
+
+  useEffect(() => {
+    loadAccounts().then(refreshQuotaResets)
+  }, [])
+
+  return (
+    <div class="animate-fade-in space-y-4 p-4">
+      <QuotaDashboard />
+      <Segmented
+        value={section}
+        onChange={setSection}
+        options={[
+          { value: "accounts", label: `Accounts${accounts.length ? ` (${accounts.length})` : ""}` },
+          { value: "rotation", label: "Rotation" },
+          { value: "import", label: "Add" },
+        ]}
+      />
+      {section === "accounts" &&
+        (accounts.length === 0 ? (
+          <EmptyState onAdd={() => setSection("import")} />
+        ) : (
+          <div class="space-y-3">
+            {accounts.map((a) => (
+              <AccountCard key={a.id} account={a} />
+            ))}
+          </div>
+        ))}
+      {section === "rotation" && <RotationConfig />}
+      {section === "import" && <AddAccountPanel onDone={() => setSection("accounts")} />}
     </div>
   )
 }
